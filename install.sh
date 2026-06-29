@@ -2,29 +2,37 @@
 
 set -Eeuo pipefail
 
+source lib/logger.sh
+source lib/system.sh
+
 clear
 
-echo
-echo "========================================="
-echo "           FedoraRice Installer"
-echo "========================================="
+echo "======================================="
+echo "         FedoraRice Installer"
+echo "======================================="
 echo
 
-echo "[*] Checking system..."
+log "Running system checks..."
 
-if [[ ! -f /etc/fedora-release ]]; then
-    echo "[ERROR] This installer only supports Fedora."
+if check_fedora; then
+    success "Fedora detected"
+else
+    error "Fedora not detected"
     exit 1
 fi
 
-echo "[OK] Fedora detected."
-
-if ! command -v plasma-apply-lookandfeel >/dev/null 2>&1; then
-    echo "[ERROR] KDE Plasma not detected."
+if check_kde; then
+    success "KDE Plasma detected"
+else
+    error "KDE Plasma not detected"
     exit 1
 fi
 
-echo "[OK] KDE Plasma detected."
+if check_internet; then
+    success "Internet connection OK"
+else
+    warn "No internet connection"
+fi
 
 echo
-echo "Installer framework ready."
+success "System ready."
